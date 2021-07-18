@@ -25,7 +25,7 @@
 
                             @foreach ($DETAIL_GOLONGAN as $DETAIL_GOLONGAN)
                             
-                            <form class="form-horizontal form-material" role="form" action="updategajipokok" method="post">
+                            <form class="form-horizontal form-material" role="form" action="/updatedetailgolongan/{{$DETAIL_GOLONGAN->ID_DETAIL_GOLONGAN}}" method="post">
                                    
                             {{ @csrf_field() }}
                                     <div class="form-group">
@@ -43,29 +43,37 @@
                                                 class="form-control pl-0 form-control-line" name="NAMA_DETAIL_GOLONGAN"
                                                 id="NAMA_DETAIL_GOLONGAN" required value=" {{ $DETAIL_GOLONGAN->NAMA_DETAIL_GOLONGAN}}">
                                         </div>
-                                    </div>                                    
+                                    </div>                                                                        
                                     <div class="form-group">
-                                        <label class="col-sm-12 mb-0">Golongan</label>
+                                        <label class="col-sm-12 mb-0">Nama Golongan</label>
                                         <div class="col-sm-12">
-                                        <select class="form-control pl-0 form-control-line" name="ID_GOLONGAN">
-                                            <option disabled selected style="padding: 10px">Select Golongan</option>
-                                            @foreach($GOLONGAN as $g)
-                                            <option value="{{ $d->ID_GOLONGAN }}">{{$d->NAMA_GOLONGAN}}</option>
-                                            @endforeach
+                                        <select class="form-control pl-0 form-control-line" id="ID_GOLONGAN" name="ID_GOLONGAN">                                            
+                                          @foreach($GOLONGAN as $g) 
+                                          <option value=" {{ $g->ID_GOLONGAN}}" 
+                                            @if($DETAIL_GOLONGAN->ID_GOLONGAN === $g->ID_GOLONGAN) 
+                                            selected
+                                            @endif>
+                                            {{ $g->NAMA_GOLONGAN}}
+                                          </option>
+                                          @endforeach
                                             </select>  
                                         </div>
-                                      </div>
+                                      </div>  
                                       <div class="form-group">
                                         <label class="col-sm-12 mb-0">Nilai</label>
                                         <div class="col-sm-12">
-                                        <select class="form-control pl-0 form-control-line" name="ID_NILAI">
-                                            <option disabled selected style="padding: 10px">Select Nilai</option>
-                                            @foreach($NILAI as $n)
-                                            <option value="{{ $n->ID_NILAI }}">{{$n->NILAI}}</option>
-                                            @endforeach
+                                        <select class="form-control pl-0 form-control-line" id="ID_NILAI" name="ID_NILAI">                                            
+                                          @foreach($NILAI as $n) 
+                                          <option value=" {{ $n->ID_NILAI}}" 
+                                            @if($DETAIL_GOLONGAN->ID_NILAI === $n->ID_NILAI) 
+                                            selected
+                                            @endif>
+                                            {{ $n->NILAI}}
+                                          </option>
+                                          @endforeach
                                             </select>  
                                         </div>
-                                      </div>
+                                      </div>  
                                     <div class="form-group">
                                         <div class="col-sm-12 d-flex">
                                             <center>
@@ -73,7 +81,6 @@
                                             </center>
                                         </div>
                                     </div>
-                                </form>
                                 </form>
 
                                 @endforeach

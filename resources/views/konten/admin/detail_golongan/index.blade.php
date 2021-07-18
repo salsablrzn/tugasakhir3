@@ -45,7 +45,7 @@
                                                 <td>{{ $DG -> NAMA_GOLONGAN }}</td>
                                                 <td>{{ $DG -> NILAI}}</td>
                                                 @if (session()->get('TIPE_AKUN') == "ADMIN")                                         
-                                                <td class="glyphicon glyphicon-pencil" style="padding: 5px"><a href="editdetailgolongan{{ $DG -> ID_DETAIL_GOLONGAN }}">Edit</td>
+                                                <td class="glyphicon glyphicon-pencil" style="padding: 5px"><a href="editdetailgolongan/{{ $DG -> ID_DETAIL_GOLONGAN }}">Edit</td>
                                                 @endif
                                             @endforeach 
 

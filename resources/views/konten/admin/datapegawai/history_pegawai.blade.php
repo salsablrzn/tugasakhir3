@@ -52,7 +52,7 @@
 
                                         <tbody>
                                             
-                                            @foreach($PEGAWAI as $PEG)
+                                            @foreach($history_pegawai as $PEG)
                                               <tr>
                                                 <td>{{ $PEG -> ID_HISTORY_PEGAWAI }}</td>
                                                 <td>{{ $PEG -> ID_PEGAWAI }}</td>

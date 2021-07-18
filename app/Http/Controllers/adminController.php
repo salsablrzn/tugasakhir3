@@ -171,7 +171,7 @@ class adminController extends Controller
 	    $ID_PENGGAJIAN = $date."P".str_pad($id,3,"0",STR_PAD_LEFT);
         penggajian::create([
             'ID_PENGGAJIAN'=>$ID_PENGGAJIAN,
-            
+
         ]);
     }
 
@@ -355,26 +355,10 @@ class adminController extends Controller
 
      public function history_pegawai(Request $request)
     {
-         
-         DB::table('history_pegawai')->where('ID_PEGAWAI',$request->ID_PEGAWAI)->insert([
-            'ID_PEGAWAI'            => $request->ID_PEGAWAI,
-            'ID_JABATAN'            => $request->ID_JABATAN,
-            'NIP'                   => $request->NIP,
-            'NAMA_PEGAWAI'          => $request->NAMA_PEGAWAI,
-            'GAJI_POKOK'            => $request->GAJI_POKOK,
-            'TUNJANGAN'             => $request->TUNJANGAN,
-            'TIPE_AKUN'             => $request->TIPE_AKUN,
-            'USERNAME'              => $request->USERNAME,
-            'PASSWORD'              => bcrypt($request->PASSWORD),
-            'JENIS_KELAMIN'         => $request->JENIS_KELAMIN,
-            'STATUS_KEPEGAWAIAN'    => $request->STATUS_KEPEGAWAIAN,
-            'ALAMAT'                => $request->ALAMAT,
-            'TELEPON'               => $request->TELEPON,            
-            'TANGGAL_LAHIR'         => $request->TANGGAL_LAHIR,
-            'STATUS'                => $request->STATUS
-            ]);  
-
-            return redirect('history_pegawai');
+        $history_pegawai= DB::table('history_pegawai')
+        ->join('jabatan','jabatan.ID_JABATAN','=','history_pegawai.ID_JABATAN')
+        ->get();
+        return view('konten/admin/datapegawai/history_pegawai',compact('history_pegawai'));
     }
 
     //--- Golongan ---//
@@ -615,12 +599,14 @@ class adminController extends Controller
     }
 
     public function editdetailgolongan($id)
-    {    
-        $GOLONGAN = DB::table('golongan')->where('ID_GOLONGAN',$id)->get();
-        $NILAI= DB::table('nilai')->where('ID_NILAI',$id)->get();
+    {   
+        // $DETAIL_GOLONGAN=detail_golongan::where('ID_DETAIL_GOLONGAN',$id)->get();
+        $GOLONGAN = DB::table('golongan')->get();
+        $NILAI= DB::table('nilai')->get();
         $DETAIL_GOLONGAN = DB::table('detail_golongan')
         ->join('golongan as g','detail_golongan.ID_GOLONGAN','g.ID_GOLONGAN')
         ->join('nilai as n','detail_golongan.ID_NILAI','n.ID_NILAI')
+        ->where('ID_DETAIL_GOLONGAN',$id)
         ->get();
         // $DETAIL_NILAI=detail_nilai::where('ID_HARI',$id)->get();
         //
@@ -628,20 +614,22 @@ class adminController extends Controller
         //
     }
 
-    public function updatedetailgolongan(Request $request)
+    public function updatedetailgolongan(Request $request,$id)
     {
-        $GOLONGAN = DB::table('golongan');
-        $NILAI= DB::table('nilai');
-        $DETAIL_GOLONGAN = DB::table('detail_golongan')
-        ->join('golongan as g','detail_golongan.ID_GOLONGAN','g.ID_GOLONGAN')
-        ->join('nilai as n','detail_golongan.ID_NILAI','n.ID_NILAI')
-        ->get();
-         DB::table('detail_golongan')->where('ID_HARI',$request->ID_HARI)->update([
+        // $GOLONGAN = DB::table('golongan');
+        // $NILAI= DB::table('nilai');
+        // $DETAIL_GOLONGAN = DB::table('detail_golongan')
+        // ->join('golongan as g','detail_golongan.ID_GOLONGAN','g.ID_GOLONGAN')
+        // ->join('nilai as n','detail_golongan.ID_NILAI','n.ID_NILAI')
+        // ->get();
+         DB::table('detail_golongan')->where('ID_DETAIL_GOLONGAN',$id)->update([
+            'ID_DETAIL_GOLONGAN'  => $id,   
+            'NAMA_DETAIL_GOLONGAN'=> $request->NAMA_DETAIL_GOLONGAN,
             'ID_NILAI'            => $request->ID_NILAI,
             'ID_GOLONGAN'         => $request->ID_GOLONGAN,       
             ]);  
 
-            return redirect('detailgolongan',['DETAIL_GOLONGAN'=>$DETAIL_GOLONGAN,'GOLONGAN'=>$GOLONGAN,'NILAI'=>$NILAI]);
+            return redirect('/detailgolongan');
     }
 
 }

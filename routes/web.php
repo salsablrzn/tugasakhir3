@@ -139,11 +139,11 @@ Route::post('updatenilai', 'adminController@updatenilai');
 
 //--------- Tampilan Detail Golongan ---------//
 
-Route::get('detailgolongan', 'adminController@detailgolongan');
+Route::get('/detailgolongan', 'adminController@detailgolongan');
 Route::get('createdetailgolongan', 'adminController@createdetailgolongan');
-Route::get('editdetailgolongan{id}', 'adminController@editdetailgolongan');
+Route::get('editdetailgolongan/{id}', 'adminController@editdetailgolongan');
 Route::post('storedetailgolongan', 'adminController@storedetailgolongan');
-Route::post('updatedetailgolongan', 'adminController@updatedetailgolongan');
+Route::post('/updatedetailgolongan/{id}', 'adminController@updatedetailgolongan');
 
 Route::get('penggajian', 'adminController@penggajian');
 Route::get('createpenggajian', 'adminController@createpenggajian');

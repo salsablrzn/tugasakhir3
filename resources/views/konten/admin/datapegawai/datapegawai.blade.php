@@ -22,6 +22,8 @@
                        
                         @if (session()->get('TIPE_AKUN') == "ADMIN")
                         <a href="admincreatedatapegawai" class="btn btn-success d-none d-md-inline-block text-white" target="_blank">Add Pegawai</a>
+                        <a href="history_pegawai" class="btn btn-primary d-none d-md-inline-block text-white" target="_blank">History Pegawai</a>
+                        <br><br>
                         @endif
                        
                       <table id="datatables-example" class="table table-striped table-bordered" width="100%" cellspacing="0">

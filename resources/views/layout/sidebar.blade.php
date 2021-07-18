@@ -26,7 +26,7 @@
                       <li><a href="{{url('admin/rekappresensi')}}">Rekap Data Presensi</a></li>
                       </ul>
                     </li>
-                    <li class="ripple"><a href="{{url('penggajian')}}"><span class="fa fa-dollar"></span>Penggajian</a></li>
+                    <li class="ripple"><a href="{{url('penggajian')}}"><span class="fa fa-dollar"></span> Penggajian  </a></li>
 
                     <li class="ripple"><a class="tree-toggle nav-header"><span class="fa-book fa"></span> Laporan Penggajian  <span class="fa-angle-right fa right-arrow text-right"></span> </a>
                       <ul class="nav nav-list tree">

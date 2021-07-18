@@ -577,7 +577,7 @@ class adminController extends Controller
     public function createdetailgolongan(){
         $golongan = DB::table('golongan')->get();
         $nilai= DB::table('nilai')->get();
-        return view('konten/admin/detail_golongan/create')->with(compact($golongan,$nilai));
+        return view('konten/admin/detail_golongan/create',['golongan'=>$golongan,'nilai'=>$nilai]);
     }
    
     public function storedetailgolongan(Request $request)
@@ -594,8 +594,8 @@ class adminController extends Controller
 
     public function editdetailgolongan($id)
     {    
-        $GOLONGAN = DB::table('golongan');
-        $NILAI= DB::table('nilai');
+        $GOLONGAN = DB::table('golongan')->where('ID_GOLONGAN',$id)->get();
+        $NILAI= DB::table('nilai')->where('ID_NILAI',$id)->get();
         $DETAIL_GOLONGAN = DB::table('detail_golongan')
         ->join('golongan as g','detail_golongan.ID_GOLONGAN','g.ID_GOLONGAN')
         ->join('nilai as n','detail_golongan.ID_NILAI','n.ID_NILAI')

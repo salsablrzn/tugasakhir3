@@ -22,6 +22,7 @@
                        
                         @if (session()->get('TIPE_AKUN') == "ADMIN")
                         <a href="creategolongan" class="btn btn-success d-none d-md-inline-block text-white" target="_blank">Add Golongan</a>
+                        <br><br>
                         @endif
                        
                       <table id="datatables-example" class="table table-striped table-bordered" width="100%" cellspacing="0">

@@ -26,6 +26,14 @@
                                     <input type = "hidden" name = "_token" value = "<?php echo csrf_token() ?>">
                                     {{ @csrf_field() }}
                                     <div class="form-group">
+                                        <label for="example-id" class="col-md-12">ID Detail Golongan</label>
+                                        <div class="col-md-12">
+                                            <input type="id" placeholder="Auto ID"
+                                                class="form-control pl-0 form-control-line" name="ID_DETAIL_GOLONGAN"
+                                                id="ID_DETAIL_GOLONGAN" disabled="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="example-nama" class="col-md-12">Nama Detail Golongan</label>
                                         <div class="col-md-12">
                                             <input type="name" placeholder="Please input nama detail golongan"
@@ -50,7 +58,7 @@
                                         <select class="form-control pl-0 form-control-line" name="ID_NILAI">
                                             <option disabled selected style="padding: 10px">Select Nilai</option>
                                             @foreach($nilai as $n)
-                                            <option value="{{ $n->ID_NILAI }}">{{$n->NAMA_NILAI}}</option>
+                                            <option value="{{ $n->ID_NILAI }}">{{$n->NILAI}}</option>
                                             @endforeach
                                             </select>  
                                         </div>

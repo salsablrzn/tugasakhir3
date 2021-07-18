@@ -153,6 +153,28 @@ class adminController extends Controller
                         ->get();
         return view('konten/admin/penggajian/create_penggajian',compact('pegawai','golpegawai'));
     }
+
+    public function createpenggajianNON(){
+
+        // $detail = DB::table('detail_golongan')->pluck('NAMA_DETAIL_GOLONGAN','ID_DETAIL_GOLONGAN');
+        $pegawai = DB::table('pegawai')->get();
+        $golpegawai = DB::table('pegawai')
+                        ->join('detail_golongan as dg','dg.ID_DETAIL_GOLONGAN','pegawai.ID_DETAIL_GOLONGAN')
+                        ->get();
+        return view('konten/admin/penggajian/create_penggajianNonPNS',compact('pegawai','golpegawai'));
+    }
+
+    public function inputPenggajian(){
+        $date= date('Ymd');
+    	$d = $date.'%';
+		$id = (DB::table('penggajian')->where('ID_PENGGAJIAN','like', $d)->count('ID_PENGGAJIAN'))+1;
+	    $ID_PENGGAJIAN = $date."P".str_pad($id,3,"0",STR_PAD_LEFT);
+        penggajian::create([
+            'ID_PENGGAJIAN'=>$ID_PENGGAJIAN,
+            
+        ]);
+    }
+
     public function getgolongan()
     {   
         $id_detail = $_POST['id'];

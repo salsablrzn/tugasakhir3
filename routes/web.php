@@ -147,6 +147,7 @@ Route::post('updatedetailgolongan', 'adminController@updatedetailgolongan');
 
 Route::get('penggajian', 'adminController@penggajian');
 Route::get('createpenggajian', 'adminController@createpenggajian');
+Route::get('createpenggajianNONPNS', 'adminController@createpenggajianNON');
 
 
 Route::post('/data-golongan','admincontroller@getgolongan');

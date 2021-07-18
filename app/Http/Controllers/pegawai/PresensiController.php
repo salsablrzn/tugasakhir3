@@ -8,6 +8,7 @@ use App\Models\MHarikerja;
 use App\Models\MPresensi;
 use App\pegawai;
 use App\presensi;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class PresensiController extends Controller
@@ -93,8 +94,13 @@ class PresensiController extends Controller
            
         }else{
             if (Helper::comparejam($harikerja->KELUAR_AWAL, $harikerja->KELUAR_AKHIR)) {
-                $pg = pegawai::where(['ID_PEGAWAI' => $id_pegawai])->first();
-                $ttltunjangan = $pg->TUNJANGAN;
+                $pg = DB::table('pegawai')
+                            ->join('detail_golongan as dg','pegawai.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+                            ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+                            ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
+                            ->where(['ID_PEGAWAI' => $id_pegawai])->first();
+
+                $ttltunjangan = $pg->NOMINAL_TUNJANGAN;
                 if ($data->STATUS_MASUK == '' || $data->STATUS_MASUK == 'Telat') {
                     $ttltunjangan = 0;
                 }

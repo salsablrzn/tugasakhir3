@@ -21,7 +21,8 @@
                       <div class="responsive-table">
                        
                         @if (session()->get('TIPE_AKUN') == "ADMIN")
-                        <a href="createpenggajian" class="btn btn-success d-none d-md-inline-block text-white" target="_blank">Add Penggajian</a>
+                          <a href="createpenggajian" class="btn btn-success d-none d-md-inline-block text-white" target="_blank">Add Penggajian PNS</a>
+                          <a href="createpenggajianNONPNS" class="btn btn-success d-none d-md-inline-block text-white" target="_blank">Add Penggajian NON PNS</a>
                         @endif
                        
                       <table id="datatables-example" class="table table-striped table-bordered" width="100%" cellspacing="0">

@@ -23,19 +23,18 @@
                          <div class="panel-body" style="padding-bottom:30px;">
                           <div class="col-md-12">
 
-                            <form class="form-horizontal form-material" action="storenilai" method="post">
+                            <form class="form-horizontal form-material" action="storegaji" method="post">
                                     <input type = "hidden" name = "_token" value = "<?php echo csrf_token() ?>">
                                     {{ @csrf_field() }}
                                     <div class="form-group">
                                         <label class="col-sm-12 mb-0">Pegawai</label>
                                         <div class="col-sm-12">
-                                        <select class="form-control pl-0 form-control-line select-pegawai" name="pegawai">
+                                        <select class="form-control pl-0 form-control-line select-pegawai" name="id_kehadiran">
                                             <option disabled selected style="padding: 10px">Select Pegawai</option>
-                                            @foreach($pegawai as $key => $value)
-                                          <option value="{{$key}}">{{ $value }}
-                                          </option>
-                                          @endforeach
-                                            </select>  
+                                            @foreach($kehadiran as $k)
+                                            <option value="{{$k->ID_DAFTAR_HADIR}}">{{ $k->NAMA_PEGAWAI }}</option>
+                                            @endforeach
+                                        </select>  
                                         </div>
                                       </div>
                                       
@@ -74,13 +73,13 @@
                                     <div class="form-group">
                                         <label for="example-nama" class="col-md-12">Total Tunjangan</label>
                                         <div class="col-md-12">
-                                            <input type="text" id="total_tunjangan" class="form-control pl-0 form-control-line" readonly>
+                                            <input type="text" id="total_tunjangan" name="total_tunjangan" class="form-control pl-0 form-control-line" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="example-nama" class="col-md-12">Total Gaji</label>
                                         <div class="col-md-12">
-                                            <input type="text" id="total_gaji" class="form-control pl-0 form-control-line" readonly>
+                                            <input type="text" id="total_gaji" name="total_gaji" class="form-control pl-0 form-control-line" readonly>
                                         </div>
                                     </div>
 
@@ -105,4 +104,15 @@
 @section('script')
 <script src="{{ asset('/assets/select-gaji-pokok.js') }}"></script>
 <script src="{{ asset('/assets/select-pegawai.js') }}"></script>
+@if (session('success'))
+  <script>
+      Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Data Karyawan Berhasil Disimpan',
+          showConfirmButton: false,
+          timer: 2000
+      }); 
+  </script>
+  @endif
 @endsection

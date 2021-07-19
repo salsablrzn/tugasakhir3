@@ -140,29 +140,6 @@ class adminController extends Controller
         return view('konten/admin/datapegawai/createdatapegawai',compact('jabatan','detail'));
     }
 
-    public function penggajian(){
-        return view('konten/admin/penggajian/index_penggajian');
-    }
-
-    public function createpenggajian(){
-
-        // $detail = DB::table('detail_golongan')->pluck('NAMA_DETAIL_GOLONGAN','ID_DETAIL_GOLONGAN');
-        $pegawai = DB::table('pegawai')->pluck('NAMA_PEGAWAI','ID_PEGAWAI');
-        $golpegawai = DB::table('pegawai')
-                        ->join('detail_golongan as dg','dg.ID_DETAIL_GOLONGAN','pegawai.ID_DETAIL_GOLONGAN')
-                        ->get();
-        return view('konten/admin/penggajian/create_penggajian',compact('pegawai','golpegawai'));
-    }
-
-    public function createpenggajianNON(){
-
-        // $detail = DB::table('detail_golongan')->pluck('NAMA_DETAIL_GOLONGAN','ID_DETAIL_GOLONGAN');
-        $pegawai = DB::table('pegawai')->get();
-        $golpegawai = DB::table('pegawai')
-                        ->join('detail_golongan as dg','dg.ID_DETAIL_GOLONGAN','pegawai.ID_DETAIL_GOLONGAN')
-                        ->get();
-        return view('konten/admin/penggajian/create_penggajianNonPNS',compact('pegawai','golpegawai'));
-    }
 
     public function inputPenggajian(){
         $date= date('Ymd');
@@ -183,22 +160,111 @@ class adminController extends Controller
     }
 
 
+    // pengelolaan penggajian
+
+    public function penggajian(){
+        $penggajian  = DB::table('penggajian')
+                        ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+                        ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
+                        ->join('detail_golongan as dg','peg.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+                        ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
+                        ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+                        ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
+                        ->selectRaw('peg.NIP, peg.NAMA_PEGAWAI, dg.NAMA_DETAIL_GOLONGAN, gu.NOMINAL_GAJI_UTAMA,t.POTONGAN_TUNJANGAN, penggajian.TOTAL_TUNJANGAN_PENGGAJIAN, penggajian.TOTAL_GAJI')
+                        ->groupBy('penggajian.ID_PENGGAJIAN')
+                        ->get();
+        
+        $tunjangan = DB::table('presensi')
+            ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+            ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as TOTAL_TUNJANGAN')
+            ->get();
+
+        return view('konten/admin/penggajian/index_penggajian')->with(compact('penggajian','tunjangan'));
+    }
+
+    public function createpenggajian(){
+
+        // $detail = DB::table('detail_golongan')->pluck('NAMA_DETAIL_GOLONGAN','ID_DETAIL_GOLONGAN');
+        // $pegawai = DB::table('pegawai')->pluck('NAMA_PEGAWAI','ID_PEGAWAI');
+        // $golpegawai = DB::table('pegawai')
+        //                 ->join('detail_golongan as dg','dg.ID_DETAIL_GOLONGAN','pegawai.ID_DETAIL_GOLONGAN')
+        //                 ->get();
+        $kehadiran  = DB::table('presensi')
+                        ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                        ->groupBy('p.ID_PEGAWAI')
+                        ->get();
+
+
+        return view('konten/admin/penggajian/create_penggajian')->with(compact('kehadiran'));
+    }
+
     public function gaji(){
-        $id_pegawai = $_POST['id'];
-        $data = DB::table('pegawai')
-                    ->join('detail_golongan as dg','pegawai.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+        $id_kehadiran = $_POST['id'];
+        // $data = DB::table('pegawai')
+        //             ->join('detail_golongan as dg','pegawai.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+        //             ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+        //             ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
+        //             ->join('tujangan as t','dg.ID_GOLONGAN','t.ID_GOLONGAN')
+        //             ->where('ID_PEGAWAI','=',$id_pegawai)
+        //             ->first();
+        //id kehadiran
+
+        $data = DB::table('presensi')
+                    ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                    ->join('detail_golongan as dg','p.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
                     ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
                     ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
                     ->join('tujangan as t','dg.ID_GOLONGAN','t.ID_GOLONGAN')
-                    ->where('ID_PEGAWAI','=',$id_pegawai)
+                    ->where('ID_DAFTAR_HADIR','=',$id_kehadiran)
                     ->first();
+
+        // $data = DB::table('pegawai')
+        // ->join('detail_golongan as dg','pegawai.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+        // ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+        // ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
+        // ->join('presensi as p','pegawai.ID_PEGAWAI','p.ID_PEGAWAI')
+        // ->join('tujangan as t','dg.ID_GOLONGAN','t.ID_GOLONGAN')
+        // ->selectRaw('pegawai.NAMA_PEGAWAI, pegawai.TGL_MASUK_KERJA, dg.NAMA_DETAIL_GOLONGAN, gu.NOMINAL_GAJI_UTAMA, SUM(TOTAL_TUNJANGAN) as TUNJANGAN, t.POTONGAN_TUNJANGAN')
+        // ->first();
 
         $now = Carbon::now();
         $lamakerja = date_diff(date_create($data->TGL_MASUK_KERJA),date_create($now));
         $lamakerja=$lamakerja->y;
 
-        return response()->json([$data,$lamakerja]);
+        $tunjangan = DB::table('presensi')
+                        ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                        ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as tunjangan')
+                        ->get();
+
+        return response()->json([$data,$lamakerja,$tunjangan]);
         
+    }
+
+    //penggajian non pns
+
+    public function createpenggajianNON(){
+
+        // $detail = DB::table('detail_golongan')->pluck('NAMA_DETAIL_GOLONGAN','ID_DETAIL_GOLONGAN');
+        $pegawai = DB::table('pegawai')->get();
+        $golpegawai = DB::table('pegawai')
+                        ->join('detail_golongan as dg','dg.ID_DETAIL_GOLONGAN','pegawai.ID_DETAIL_GOLONGAN')
+                        ->get();
+        return view('konten/admin/penggajian/create_penggajianNonPNS',compact('pegawai','golpegawai'));
+    }
+
+    
+
+    public function storegaji(Request $request){
+        DB::table('penggajian')
+            ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+            ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
+            ->insert([
+            'ID_DAFTAR_HADIR'               => $request->id_kehadiran,
+            'TOTAL_TUNJANGAN_PENGGAJIAN'    => $request->total_tunjangan,
+            'TOTAL_GAJI'                    => $request->total_gaji,
+        ]);
+
+        return redirect('penggajian')->with('success','success');
     }
 
     public function createdataguru(){

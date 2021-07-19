@@ -33,25 +33,18 @@
                                             <option disabled selected style="padding: 10px">Select Pegawai</option>
                                             @foreach($pegawai as $key)
                                             @if($key->STATUS_KEPEGAWAIAN == 1)
-                                          <option value="{{$key->ID_PEGAWAI}}">{{ $key->NAMA_PEGAWAI }}
-                                          </option>
-                                          @endif
-                                          @endforeach
+                                            <option value="{{$key->ID_PEGAWAI}}">{{ $key->NAMA_PEGAWAI }}
+                                            </option>
+                                            @endif
+                                            @endforeach
                                             </select>   
                                         </div>
                                       </div>
-                                      
-                                    <div class="form-group">
-                                        <label for="example-nama" class="col-md-12">Golongan</label>
-                                        <div class="col-md-12">
-                                            <input type="text" id="golongan" name="golongan" class="form-control pl-0 form-control-line" >
-                                        </div>
-                                    </div>
 
                                     <div class="form-group">
                                         <label for="example-nama" class="col-md-12">Lama Kerja</label>
                                         <div class="col-md-12">
-                                            <input type="text" id="lama_kerja" class="form-control pl-0 form-control-line" >
+                                            <input type="text" readonly id="lama_kerja" class="form-control pl-0 form-control-line" >
                                         </div>
                                     </div>
 

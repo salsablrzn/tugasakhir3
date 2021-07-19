@@ -30,7 +30,6 @@
                                             <tr>
                                                 <th class="border-top-0">NIP</th>
                                                 <th class="border-top-0">Nama Pegawai</th>
-                                                <th class="border-top-0">Lama Kerja</th>
                                                 <th class="border-top-0">Golongan</th>
                                                 <th class="border-top-0">Gaji Pokok</th>
                                                 <th class="border-top-0">Tunjangan</th>
@@ -42,7 +41,20 @@
 
                                         <tbody>
                                             
-                                           
+                                           @foreach($penggajian as $p)
+                                            <tr>
+                                              <td>{{$p->NIP}}</td>
+                                              <td>{{$p->NAMA_PEGAWAI}}</td>
+                                              <td>{{$p->NAMA_DETAIL_GOLONGAN}}</td>
+                                              <td>{{$p->NOMINAL_GAJI_UTAMA}}</td>
+                                              @foreach($tunjangan as $t)
+                                              <td>{{$t->TOTAL_TUNJANGAN}}</td>
+                                              @endforeach
+                                              <td>{{$p->POTONGAN_TUNJANGAN}}</td>
+                                              <td>{{$p->TOTAL_TUNJANGAN_PENGGAJIAN}}</td>
+                                              <td>{{$p->TOTAL_GAJI}}</td>
+                                            </tr>
+                                           @endforeach
 
                                         </tbody>
 
@@ -54,5 +66,15 @@
               </div>
             </div>
 
-
+  @if (session('success'))
+    <script>
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Data Penggajian Berhasil Disimpan',
+            showConfirmButton: false,
+            timer: 2000
+        }); 
+    </script>
+  @endif
 @endsection

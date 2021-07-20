@@ -231,12 +231,20 @@ class adminController extends Controller
         $lamakerja = date_diff(date_create($data->TGL_MASUK_KERJA),date_create($now));
         $lamakerja=$lamakerja->y;
 
+        $gaji_pokok     = DB::table('presensi')
+                            ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                            ->join('detail_golongan as dg','p.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+                            ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
+                            ->where('gu.MASSA_KERJA','=',$lamakerja)
+                            ->groupBy('presensi.ID_PEGAWAI')
+                            ->get();
+
         $tunjangan = DB::table('presensi')
                         ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
                         ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as tunjangan')
                         ->get();
 
-        return response()->json([$data,$lamakerja,$tunjangan]);
+        return response()->json([$data,$lamakerja,$gaji_pokok,$tunjangan]);
         
     }
 

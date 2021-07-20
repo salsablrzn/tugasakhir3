@@ -61,7 +61,7 @@
                                         <label for="example-nama" class="col-md-12">Gaji Pokok</label>
                                         <div class="col-md-12">
                                             <!-- <input type="text"class="form-control pl-0 form-control-line" name="GAJI_POKOK" id="" required> -->
-                                            <select class="form-control pl-0 form-control-line GAJI-POKOK" name="GAJI_POKOK" id="">
+                                            <select readonly class="form-control pl-0 form-control-line GAJI-POKOK" name="GAJI_POKOK" id="">
                                                 <option disabled selected style="padding: 10px">Select Golongan</option>
                                             </select> 
                                         </div>

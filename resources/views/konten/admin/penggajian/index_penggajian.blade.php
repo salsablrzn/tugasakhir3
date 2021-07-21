@@ -28,6 +28,7 @@
                       <table id="datatables-example" class="table table-striped table-bordered" width="100%" cellspacing="0">
                        <thead>
                                             <tr>
+                                                <th class="border-top-0">Tanggal Penggajian</th>
                                                 <th class="border-top-0">NIP</th>
                                                 <th class="border-top-0">Nama Pegawai</th>
                                                 <th class="border-top-0">Golongan</th>
@@ -43,10 +44,11 @@
                                             
                                            @foreach($penggajian as $p)
                                             <tr>
+                                              <td>{{\Carbon\Carbon::parse($p->CREATE_AT)->translatedFormat('l, d F Y')}}</td>
                                               <td>{{$p->NIP}}</td>
                                               <td>{{$p->NAMA_PEGAWAI}}</td>
                                               <td>{{$p->NAMA_DETAIL_GOLONGAN}}</td>
-                                              <td>{{$p->NOMINAL_GAJI_UTAMA}}</td>
+                                              <td>{{$p->GAJI_POKOK}}</td>
                                               @foreach($tunjangan as $t)
                                               <td>{{$t->TOTAL_TUNJANGAN}}</td>
                                               @endforeach

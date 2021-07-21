@@ -28,16 +28,46 @@ class PenggajianController extends Controller
     public function data($tipe)
     {
         $tdy = date('Y-m');
-        $history = MPenggajian::selectRaw("DISTINCT(BULAN_GAJIAN) as bulan")->get();
+        $history = DB::table('penggajian')->selectRaw("DISTINCT(BULAN_GAJIAN) as bulan")->get();
 
-        $data = MPenggajian::whereRaw(" penggajian.BULAN_GAJIAN like '%$tdy%'")
-        ->leftjoin('pegawai as b', 'penggajian.ID_PEGAWAI', 'b.ID_PEGAWAI')
-        ->selectRaw('b.NAMA_PEGAWAI, penggajian.*, b.NIP')
-        ->orderBy('penggajian.CREATE_AT', 'ASC')->get();
+        // $data = DB::table('penggajian')->whereRaw(" penggajian.BULAN_GAJIAN like '%$tdy%'")
+        // ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+        // ->join('pegawai as b', 'p.ID_PEGAWAI', 'b.ID_PEGAWAI')
+        // ->selectRaw('b.NAMA_PEGAWAI, penggajian.*, b.NIP')
+        // ->orderBy('penggajian.CREATE_AT', 'ASC')->get();
+
+        $data = DB::table('penggajian')->whereRaw(" penggajian.BULAN_GAJIAN like '%$tdy%'")
+                    ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+                    ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
+                    ->join('detail_golongan as dg','peg.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+                    ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
+                    ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+                    ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
+                    ->groupBy('penggajian.ID_PENGGAJIAN')
+                    ->orderBy('penggajian.CREATE_AT', 'ASC')
+                    ->get();
+
+
+        // $penggajian  = DB::table('penggajian')
+        //                 ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+        //                 ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
+        //                 ->join('detail_golongan as dg','peg.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+        //                 ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
+        //                 ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+        //                 ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
+        //                 ->selectRaw('penggajian.CREATE_AT, peg.NIP, peg.NAMA_PEGAWAI, dg.NAMA_DETAIL_GOLONGAN, gu.NOMINAL_GAJI_UTAMA,t.POTONGAN_TUNJANGAN, penggajian.TOTAL_TUNJANGAN_PENGGAJIAN, penggajian.TOTAL_GAJI')
+        //                 ->groupBy('penggajian.ID_PENGGAJIAN')
+        //                 ->get();
+        
+        $tunjangan = DB::table('presensi')
+            ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+            ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as TOTAL_TUNJANGAN')
+            ->get();
+
         // return $data;
         $arrtipe = ['keseluruhan' => 'Gaji Keseluruhan', 'utama' => 'Gaji Utama', 'tunjangan' => 'Tunjangan'];
         $title = "Rekap " . $arrtipe[$tipe] . " Bulan Ini";
-        return view('konten/admin/rekappenggajian/penggajian', compact('data', 'history', 'title', 'tipe', 'tdy'));
+        return view('konten/admin/rekappenggajian/penggajian', compact('data', 'history', 'title', 'tipe', 'tdy','tunjangan'));
     }
     public function exportpdf($id,$tipe)
     {

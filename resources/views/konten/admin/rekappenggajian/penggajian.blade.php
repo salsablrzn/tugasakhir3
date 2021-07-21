@@ -87,25 +87,25 @@
 
                                 <tbody id="tmpdata">
                                     @foreach ($data as $item)
-                                        @php
-                                        $potongan = ($item->POTONGAN == 0 ? 0 : $item->POTONGAN) / 100 *
-                                        $item->TUNJANGAN_MAMIN
-                                        @endphp
+                                        
                                         <tr>
 
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->NAMA_PEGAWAI }}</td>
                                             <td>{{ Helper::bulantahun($item->BULAN_GAJIAN) }}</td>
                                             @if ($tipe == 'utama' || $tipe == 'keseluruhan')
-                                                <td>{{ Helper::price($item->GAJI_POKOK) }}</td>
+                                                <td>{{$item->GAJI_POKOK}}</td>
                                             @endif
                                             @if ($tipe == 'tunjangan' || $tipe == 'keseluruhan')
-                                                <td>{{ Helper::price($item->TUNJANGAN_MAMIN) }}</td>
-                                                <td>{{ $item->POTONGAN.'% ('. Helper::price($potongan).')' }}</td>
-                                                <td>{{ Helper::price((int)$item->TUNJANGAN_MAMIN - (int)$potongan) }}</td>
+                                            @foreach($tunjangan as $t)
+                                                <td>{{$t->TOTAL_TUNJANGAN}}</td>
+                                            @endforeach
+                                                <td>{{$item->POTONGAN_TUNJANGAN}}</td>
+                                                <td>{{$item->TOTAL_TUNJANGAN_PENGGAJIAN}}</td>
+                                                
                                             @endif
                                             @if ($tipe == 'keseluruhan')
-                                                <td>{{ Helper::price($item->TOTAL_GAJI) }}</td>
+                                                <td>{{$item->TOTAL_GAJI}}</td>
                                             @endif
                                             <td>
                                                 {{ Helper::waktu($item->CREATE_AT) }}

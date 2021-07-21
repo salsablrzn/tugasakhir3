@@ -170,10 +170,9 @@ class adminController extends Controller
                         ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
                         ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
                         ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
-                        ->selectRaw('peg.NIP, peg.NAMA_PEGAWAI, dg.NAMA_DETAIL_GOLONGAN, gu.NOMINAL_GAJI_UTAMA,t.POTONGAN_TUNJANGAN, penggajian.TOTAL_TUNJANGAN_PENGGAJIAN, penggajian.TOTAL_GAJI')
                         ->groupBy('penggajian.ID_PENGGAJIAN')
                         ->get();
-        
+
         $tunjangan = DB::table('presensi')
             ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
             ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as TOTAL_TUNJANGAN')
@@ -263,11 +262,15 @@ class adminController extends Controller
     
 
     public function storegaji(Request $request){
+        $tdy = date('Y-m');
+
         DB::table('penggajian')
             ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
             ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
             ->insert([
             'ID_DAFTAR_HADIR'               => $request->id_kehadiran,
+            'BULAN_GAJIAN'                  => $tdy,
+            'GAJI_POKOK'                    => $request->gaji_pokok,
             'TOTAL_TUNJANGAN_PENGGAJIAN'    => $request->total_tunjangan,
             'TOTAL_GAJI'                    => $request->total_gaji,
         ]);

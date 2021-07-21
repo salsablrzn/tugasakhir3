@@ -55,7 +55,7 @@
                                     <div class="form-group">
                                         <label for="example-nama" class="col-md-12">Gaji Pokok</label>
                                         <div class="col-md-12">
-                                            <input type="text" id="gaji_pokok" class="form-control pl-0 form-control-line" readonly>
+                                            <input type="text" id="gaji_pokok" name="gaji_pokok" class="form-control pl-0 form-control-line" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group">

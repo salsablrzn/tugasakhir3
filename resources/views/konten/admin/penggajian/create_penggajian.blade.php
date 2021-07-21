@@ -32,7 +32,9 @@
                                         <select class="form-control pl-0 form-control-line select-pegawai" name="id_kehadiran">
                                             <option disabled selected style="padding: 10px">Select Pegawai</option>
                                             @foreach($kehadiran as $k)
+                                            @if($k->STATUS_KEPEGAWAIAN==0)
                                             <option value="{{$k->ID_DAFTAR_HADIR}}">{{ $k->NAMA_PEGAWAI }}</option>
+                                            @endif
                                             @endforeach
                                         </select>  
                                         </div>

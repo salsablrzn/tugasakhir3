@@ -148,11 +148,13 @@ Route::post('/updatedetailgolongan/{id}', 'adminController@updatedetailgolongan'
 
 //--------- Tampilan Pennggajian ---------//
 Route::get('penggajian', 'adminController@penggajian');
+
+Route::post('/data-pegawai','admincontroller@gaji');
 Route::get('createpenggajian', 'adminController@createpenggajian');
 Route::post('storegaji', 'adminController@storegaji');
 
+Route::post('/data-pegawai-non','admincontroller@gajinon');
 Route::get('createpenggajianNONPNS', 'adminController@createpenggajianNON');
-
+Route::post('storegajinon', 'adminController@storegajinon');
 
 Route::post('/data-golongan','admincontroller@getgolongan');
-Route::post('/data-pegawai','admincontroller@gaji');

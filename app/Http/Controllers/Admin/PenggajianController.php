@@ -40,7 +40,6 @@ class PenggajianController extends Controller
                     ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
                     ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
                     ->join('detail_golongan as dg','peg.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
-                    ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
                     ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
                     ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
                     ->groupBy('penggajian.ID_PENGGAJIAN')

@@ -163,11 +163,20 @@ class adminController extends Controller
     // pengelolaan penggajian
 
     public function penggajian(){
+        // $penggajian  = DB::table('penggajian')
+        //                 ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+        //                 ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
+        //                 ->join('detail_golongan as dg','peg.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+        //                 ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
+        //                 ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+        //                 ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
+        //                 ->groupBy('penggajian.ID_PENGGAJIAN')
+        //                 ->get();
+
         $penggajian  = DB::table('penggajian')
                         ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
                         ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
                         ->join('detail_golongan as dg','peg.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
-                        ->join('gaji_utama as gu','dg.ID_DETAIL_GOLONGAN','gu.ID_DETAIL_GOLONGAN')
                         ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
                         ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
                         ->groupBy('penggajian.ID_PENGGAJIAN')
@@ -251,15 +260,39 @@ class adminController extends Controller
 
     public function createpenggajianNON(){
 
-        // $detail = DB::table('detail_golongan')->pluck('NAMA_DETAIL_GOLONGAN','ID_DETAIL_GOLONGAN');
-        $pegawai = DB::table('pegawai')->get();
-        $golpegawai = DB::table('pegawai')
-                        ->join('detail_golongan as dg','dg.ID_DETAIL_GOLONGAN','pegawai.ID_DETAIL_GOLONGAN')
+        $kehadiran  = DB::table('presensi')
+                        ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                        ->groupBy('p.ID_PEGAWAI')
                         ->get();
-        return view('konten/admin/penggajian/create_penggajianNonPNS',compact('pegawai','golpegawai'));
+
+
+        return view('konten/admin/penggajian/create_penggajianNonPNS')->with(compact('kehadiran'));
     }
 
-    
+    public function gajinon(){
+        $id_kehadiran = $_POST['id'];
+
+        $data = DB::table('presensi')
+                    ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                    ->join('detail_golongan as dg','p.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+                    ->join('tujangan as t','dg.ID_GOLONGAN','t.ID_GOLONGAN')
+                    ->where('presensi.ID_DAFTAR_HADIR','=',$id_kehadiran)
+                    ->first();
+
+        $now = Carbon::now();
+        $lamakerjanon = date_diff(date_create($data->TGL_MASUK_KERJA),date_create($now));
+        $lamakerjanon=$lamakerjanon->y;
+
+        $tunjangan = DB::table('presensi')
+                        ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                        ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as tunjangan')
+                        ->where('presensi.ID_DAFTAR_HADIR','=',$id_kehadiran)
+                        ->get();
+
+        return response()->json([$data, $lamakerjanon, $tunjangan]);
+        
+    }
+
 
     public function storegaji(Request $request){
         $tdy = date('Y-m');
@@ -269,6 +302,23 @@ class adminController extends Controller
             ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
             ->insert([
             'ID_DAFTAR_HADIR'               => $request->id_kehadiran,
+            'BULAN_GAJIAN'                  => $tdy,
+            'GAJI_POKOK'                    => $request->gaji_pokok,
+            'TOTAL_TUNJANGAN_PENGGAJIAN'    => $request->total_tunjangan,
+            'TOTAL_GAJI'                    => $request->total_gaji,
+        ]);
+
+        return redirect('penggajian')->with('success','success');
+    }
+
+    public function storegajinon(Request $request){
+        $tdy = date('Y-m');
+
+        DB::table('penggajian')
+            ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+            ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
+            ->insert([
+            'ID_DAFTAR_HADIR'               => $request->pegawai,
             'BULAN_GAJIAN'                  => $tdy,
             'GAJI_POKOK'                    => $request->gaji_pokok,
             'TOTAL_TUNJANGAN_PENGGAJIAN'    => $request->total_tunjangan,

@@ -49,9 +49,7 @@
                                               <td>{{$p->NAMA_PEGAWAI}}</td>
                                               <td>{{$p->NAMA_DETAIL_GOLONGAN}}</td>
                                               <td>{{$p->GAJI_POKOK}}</td>
-                                              @foreach($tunjangan as $t)
-                                              <td>{{$t->TOTAL_TUNJANGAN}}</td>
-                                              @endforeach
+                                              <td>{{$p->TUNJANGAN}}</td>
                                               <td>{{$p->POTONGAN_TUNJANGAN}}</td>
                                               <td>{{$p->TOTAL_TUNJANGAN_PENGGAJIAN}}</td>
                                               <td>{{$p->TOTAL_GAJI}}</td>

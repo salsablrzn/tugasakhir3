@@ -54,7 +54,7 @@
                                      @if (session()->get('TIPE_AKUN') == "ADMIN")
                                     <a href="{{ url('admin/penggajian/buat') }}"
                                         style="margin-right:10px; margin-bottom: 10px; float:right;"
-                                        class="btn btn-primary"><i class="fa fa-plus"></i> Form Penggajian</a>
+                                        class="btn btn-primary" disabled><i class="fa fa-plus"></i> Form Penggajian</a>
                                         @endif
                                 </div>
                             </div>
@@ -81,7 +81,8 @@
                                         @if ($tipe == 'keseluruhan')
                                             <th class="border-top-0 text-center">Gaji Bersih</th>
                                         @endif
-                                        <th class="border-top-0 text-center">Di Input Pada / Cetak</th>
+                                        <th class="border-top-0 text-center">Di Input Pada</th>
+                                        <th class="border-top-0 text-center"> Cetak PDF </th>
                                     </tr>
                                 </thead>
 
@@ -97,9 +98,7 @@
                                                 <td>{{$item->GAJI_POKOK}}</td>
                                             @endif
                                             @if ($tipe == 'tunjangan' || $tipe == 'keseluruhan')
-                                            @foreach($tunjangan as $t)
-                                                <td>{{$t->TOTAL_TUNJANGAN}}</td>
-                                            @endforeach
+                                                <td>{{$item->TUNJANGAN}}</td>
                                                 <td>{{$item->POTONGAN_TUNJANGAN}}</td>
                                                 <td>{{$item->TOTAL_TUNJANGAN_PENGGAJIAN}}</td>
                                                 
@@ -109,6 +108,8 @@
                                             @endif
                                             <td>
                                                 {{ Helper::waktu($item->CREATE_AT) }}
+                                            </td>
+                                            <td>
                                                 <a class="btn btn-sm" href="{{url('admin/penggajian/exportpdf/'.$item->ID_PENGGAJIAN.'/'.$tipe.'')}}"><i class="fa fa-print"></i> </a>
                                             </td>
                                         </tr>

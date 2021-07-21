@@ -58,29 +58,65 @@ class PenggajianController extends Controller
         //                 ->groupBy('penggajian.ID_PENGGAJIAN')
         //                 ->get();
         
-        $tunjangan = DB::table('presensi')
-            ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
-            ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as TOTAL_TUNJANGAN')
-            ->get();
+        // $tunjangan = DB::table('presensi')
+        //     ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+        //     ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as TOTAL_TUNJANGAN')
+        //     ->groupBy(DB::raw("p.ID_PEGAWAI"))
+        //     ->get();
 
         // return $data;
         $arrtipe = ['keseluruhan' => 'Gaji Keseluruhan', 'utama' => 'Gaji Utama', 'tunjangan' => 'Tunjangan'];
         $title = "Rekap " . $arrtipe[$tipe] . " Bulan Ini";
-        return view('konten/admin/rekappenggajian/penggajian', compact('data', 'history', 'title', 'tipe', 'tdy','tunjangan'));
+        return view('konten/admin/rekappenggajian/penggajian', compact('data', 'history', 'title', 'tipe', 'tdy'));
     }
     public function exportpdf($id,$tipe)
     {
-        $data = MPenggajian::whereRaw(" penggajian.ID_PENGGAJIAN like '%$id%'")
-        ->leftjoin('pegawai as b', 'penggajian.ID_PEGAWAI', 'b.ID_PEGAWAI')
-        ->selectRaw('b.NAMA_PEGAWAI, penggajian.*, b.NIP')
-        ->orderBy('penggajian.CREATE_AT', 'ASC')->first();
+        $data = DB::table('penggajian')->whereRaw(" penggajian.ID_PENGGAJIAN like '%$id%'")
+                    ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+                    ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
+                    ->join('detail_golongan as dg','peg.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+                    ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+                    ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
+                    ->groupBy('penggajian.ID_PENGGAJIAN')
+                    ->orderBy('penggajian.CREATE_AT', 'ASC')
+                    ->get();
+
+        $tunjangan = DB::table('presensi')
+                        ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                        ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as TOTAL_TUNJANGAN')
+                        ->get();
+
         $arrtipe = ['keseluruhan' => 'Keseluruhan', 'utama' => 'Utama', 'tunjangan' => 'Tunjangan'];
-        $title = "Gaji " . $arrtipe[$tipe] . " ". $data->NAMA_PEGAWAI." Pada Bulan ". Helper::bulantahun($data->BULAN_GAJIAN);
-        // return view('konten/admin/rekappenggajian/pdf', compact('data', 'title', 'tipe'));
-        // PDF::setOptions(['orientation' => 'landscape']);
-        $pdf = PDF::loadView('konten.admin.rekappenggajian.pdf', compact('data', 'title', 'tipe'))->setPaper('a4', 'landscape');
+        $title = "Gaji ".$arrtipe[$tipe] ." ".$data[0]->NAMA_PEGAWAI." Pada Bulan ".Helper::bulantahun($data[0]->BULAN_GAJIAN);
+        $pdf = PDF::loadView('konten.admin.rekappenggajian.pdf', compact('data', 'tunjangan', 'title', 'tipe'))->setPaper('a4', 'landscape');
         return $pdf->download($title.'.pdf');
     }
+
+    public function exportexcel($tipe, $tdy)
+    {
+
+        $data = DB::table('penggajian')->whereRaw(" penggajian.BULAN_GAJIAN like '%$tdy%'")
+                    ->join('presensi as p','penggajian.ID_DAFTAR_HADIR','p.ID_DAFTAR_HADIR')
+                    ->join('pegawai as peg','p.ID_PEGAWAI','peg.ID_PEGAWAI')
+                    ->join('detail_golongan as dg','peg.ID_DETAIL_GOLONGAN','dg.ID_DETAIL_GOLONGAN')
+                    ->join('golongan as g','dg.ID_GOLONGAN','g.ID_GOLONGAN')
+                    ->join('tujangan as t','g.ID_GOLONGAN','t.ID_GOLONGAN')
+                    ->groupBy('penggajian.ID_PENGGAJIAN')
+                    ->orderBy('penggajian.CREATE_AT', 'ASC')
+                    ->get();
+
+        $tunjangan = DB::table('presensi')
+                ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as TOTAL_TUNJANGAN')
+                ->get();
+
+        // return $data;
+        $arrtipe = ['keseluruhan' => 'Gaji Keseluruhan', 'utama' => 'Gaji Utama', 'tunjangan' => 'Tunjangan'];
+        $title = "Rekap " . $arrtipe[$tipe] . " Bulan"." ".Helper::bulantahun($tdy);
+        return view('konten/admin/rekappenggajian/export', compact('data', 'title', 'tipe', 'tdy', 'tunjangan'));
+
+    }
+
     public function buat()
     {
         // return password_hash("123456", PASSWORD_BCRYPT);
@@ -147,16 +183,5 @@ class PenggajianController extends Controller
         }
     }
 
-    public function exportexcel($tipe, $tdy)
-    {
-
-
-        $data = MPenggajian::whereRaw(" penggajian.BULAN_GAJIAN like '%$tdy%'")
-        ->leftjoin('pegawai as b', 'penggajian.ID_PEGAWAI', 'b.ID_PEGAWAI')
-        ->selectRaw('b.NAMA_PEGAWAI, penggajian.*')
-        ->orderBy('penggajian.CREATE_AT', 'ASC')->get();
-        $arrtipe = ['keseluruhan' => 'Gaji Keseluruhan', 'utama' => 'Gaji Utama', 'tunjangan' => 'Tunjangan'];
-        $title = "Rekap " . $arrtipe[$tipe] . " Bulan ".Helper::bulantahun($tdy);
-        return view('konten/admin/rekappenggajian/export', compact('data', 'title', 'tipe', 'tdy'));
-    }
+    
 }

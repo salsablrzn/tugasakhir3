@@ -30,7 +30,7 @@
                                             <span style="font-weight: 600">Kode Penggajian</span></td>
                                         <td> <span
                                                 style="color: #42b549; font-weight: 600;"
-                                                id="ID_PENGGAJIAN">#{{ strtoupper($data->ID_PENGGAJIAN) }}</span>
+                                                id="ID_PENGGAJIAN">#{{ strtoupper($data[0]->ID_PENGGAJIAN) }}</span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -63,7 +63,7 @@
                                             Nama Pegawai
                                         </td>
                                         <td style="font-size: 14px; padding-bottom: 6px;">
-                                            {{ $data->NAMA_PEGAWAI }}
+                                            {{ $data[0]->NAMA_PEGAWAI }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -72,7 +72,7 @@
                                             NIP
                                         </td>
                                         <td style="font-size: 14px; padding-bottom: 6px;">
-                                            {{ $data->NIP }}
+                                            {{ $data[0]->NIP }}
                                         </td>
                                     </tr>
 
@@ -104,32 +104,26 @@
                             @endif
                             <td style="padding: 10px 15px;">Di Input Pada</td>
                         </tr>
-
-
-                        @php
-                        $potongan = ($data->POTONGAN == 0 ? 0 : $data->POTONGAN) / 100 *
-                        $data->TUNJANGAN_MAMIN
-                        @endphp
+                        
                         <tr style="font-size: 14px;">
                             {{-- <td style="padding: 10px; font-weight: 600; word-break: break-word;">
-                                {{ $data->NAMA_PEGAWAI }}</td> --}}
+                                {{ $data[0]->NAMA_PEGAWAI }}</td> --}}
                            <td style="padding: 10px; font-weight: 600; word-break: break-word;">
-                                {{ Helper::bulantahun($data->BULAN_GAJIAN) }}</td>
+                                {{ Helper::bulantahun($data[0]->BULAN_GAJIAN) }}</td>
+
                             @if ($tipe == 'utama' || $tipe == 'keseluruhan')
-                                <td  style="padding: 10px;">
-                                    {{ Helper::price($data->GAJI_POKOK) }}</td>
+                                <td  style="padding: 10px;">{{$data[0]->GAJI_POKOK}}</td>
                             @endif
+
                             @if ($tipe == 'tunjangan' || $tipe == 'keseluruhan')
-                                <td  style="padding: 10px;">
-                                    {{ Helper::price($data->TUNJANGAN_MAMIN) }}</td>
-                                <td  style="padding: 10px;">
-                                    {{ $data->POTONGAN . '% (' . Helper::price($potongan) . ')' }}</td>
-                                <td  style="padding: 10px;">
-                                    {{ Helper::price((int) $data->TUNJANGAN_MAMIN - (int) $potongan) }}</td>
+                                <td  style="padding: 10px;">{{$data[0]->TUNJANGAN}}</td>
+                                <td  style="padding: 10px;">{{$data[0]->POTONGAN_TUNJANGAN}}</td>
+                                <td  style="padding: 10px;">{{$data[0]->TOTAL_TUNJANGAN_PENGGAJIAN}}</td>
+                                
                             @endif
                             <td  style="padding: 10px;">
 
-                                {{ Helper::waktu($data->CREATE_AT) }}
+                                {{ Helper::waktu($data[0]->CREATE_AT) }}
                             </td>
                         </tr>
                         <tr>
@@ -155,7 +149,7 @@
                                         @if ($tipe == 'keseluruhan')
                                             <td class="padding: 10px 15px; text-align: center;" style="text-align:center">Gaji Bersih</td>
                                             <td style="padding: 15px 0 15px 15px; text-align:center">
-                                               {{ Helper::price($data->TOTAL_GAJI) }}
+                                               {{$data[0]->TOTAL_GAJI}}
                                             </td>
                                         @endif
                                     </tr>

@@ -21,9 +21,19 @@ header("Content-Disposition: attachment; filename=$title.xls");
 </style>
 <table border="1" width="100%">
     <tr>
-        <td colspan="<?= $tipe == "utama" ? 5 : $tipe == "tunjangan" ? 7 : 9 ?>" style="text-align:center; padding: 12px;">
-            <?php echo $title; ?>
-        </td>
+        @if($tipe=="utama")
+            <td colspan="5" style="text-align:center; padding: 12px;">
+                <?php echo $title; ?>
+            </td>
+        @elseif($tipe=="tunjangan")
+            <td colspan="7" style="text-align:center; padding: 12px;">
+                <?php echo $title; ?>
+            </td>
+        @else
+            <td colspan="9" style="text-align:center; padding: 12px;">
+                <?php echo $title; ?>
+            </td>
+        @endif
     </tr>
     <tr>
         <td class="border-top-0 text-center">No</td>
@@ -43,27 +53,30 @@ header("Content-Disposition: attachment; filename=$title.xls");
         <td class="border-top-0 text-center">Di Input Pada</td>
     </tr>
     @foreach ($data as $item)
-        @php
-        $potongan = ($item->POTONGAN == 0 ? 0 : $item->POTONGAN) / 100 *
-        $item->TUNJANGAN_MAMIN
-        @endphp
+        
         <tr>
 
             <td>{{ $loop->iteration }}</td>
             <td>{{ $item->NAMA_PEGAWAI }}</td>
             <td>{{ Helper::bulantahun($item->BULAN_GAJIAN) }}</td>
             @if ($tipe == 'utama' || $tipe == 'keseluruhan')
-                <td>{{ Helper::price($item->GAJI_POKOK) }}</td>
+                <td>{{$item->GAJI_POKOK}}</td>
             @endif
             @if ($tipe == 'tunjangan' || $tipe == 'keseluruhan')
-                <td>{{ Helper::price($item->TUNJANGAN_MAMIN) }}</td>
-                <td>{{ $item->POTONGAN.'% ('. Helper::price($potongan).')' }}</td>
-                <td>{{ Helper::price((int)$item->TUNJANGAN_MAMIN - (int)$potongan) }}</td>
+      
+                <td>{{$item->TUNJANGAN}}</td>
+           
+                <td>{{$item->POTONGAN_TUNJANGAN}}</td>
+                <td>{{$item->TOTAL_TUNJANGAN_PENGGAJIAN}}</td>
+                
             @endif
             @if ($tipe == 'keseluruhan')
-                <td>{{ Helper::price($item->TOTAL_GAJI) }}</td>
+                <td>{{$item->TOTAL_GAJI}}</td>
             @endif
-            <td>{{ Helper::waktu($item->CREATE_AT) }}</td>
+            <td>
+                {{ Helper::waktu($item->CREATE_AT) }}
+                <a class="btn btn-sm" href="{{url('admin/penggajian/exportpdf/'.$item->ID_PENGGAJIAN.'/'.$tipe.'')}}"><i class="fa fa-print"></i> </a>
+            </td>
         </tr>
     @endforeach
 </table>

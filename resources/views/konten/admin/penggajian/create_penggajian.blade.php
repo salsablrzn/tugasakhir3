@@ -63,7 +63,7 @@
                                     <div class="form-group">
                                         <label for="example-nama" class="col-md-12">Tunjangan</label>
                                         <div class="col-md-12">
-                                            <input type="text" id="tunjangan" class="form-control pl-0 form-control-line" readonly>
+                                            <input type="text" id="tunjangan" name="tunjangan" class="form-control pl-0 form-control-line" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group">

@@ -185,6 +185,7 @@ class adminController extends Controller
         $tunjangan = DB::table('presensi')
             ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
             ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as TOTAL_TUNJANGAN')
+            ->groupBy(DB::raw("p.ID_PEGAWAI"))
             ->get();
 
         return view('konten/admin/penggajian/index_penggajian')->with(compact('penggajian','tunjangan'));
@@ -250,6 +251,8 @@ class adminController extends Controller
         $tunjangan = DB::table('presensi')
                         ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
                         ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as tunjangan')
+                        ->groupBy(DB::raw("p.ID_PEGAWAI"))
+                        ->where('presensi.ID_PEGAWAI','=',$data->ID_PEGAWAI)
                         ->get();
 
         return response()->json([$data,$lamakerja,$gaji_pokok,$tunjangan]);
@@ -284,9 +287,10 @@ class adminController extends Controller
         $lamakerjanon=$lamakerjanon->y;
 
         $tunjangan = DB::table('presensi')
-                        ->join('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
+                        ->leftjoin('pegawai as p','presensi.ID_PEGAWAI','p.ID_PEGAWAI')
                         ->selectRaw('SUM(presensi.TOTAL_TUNJANGAN) as tunjangan')
-                        ->where('presensi.ID_DAFTAR_HADIR','=',$id_kehadiran)
+                        ->groupBy(DB::raw("p.ID_PEGAWAI"))
+                        ->where('presensi.ID_PEGAWAI','=',$data->ID_PEGAWAI)
                         ->get();
 
         return response()->json([$data, $lamakerjanon, $tunjangan]);
@@ -303,6 +307,7 @@ class adminController extends Controller
             ->insert([
             'ID_DAFTAR_HADIR'               => $request->id_kehadiran,
             'BULAN_GAJIAN'                  => $tdy,
+            'TUNJANGAN'                     => $request->tunjangan,
             'GAJI_POKOK'                    => $request->gaji_pokok,
             'TOTAL_TUNJANGAN_PENGGAJIAN'    => $request->total_tunjangan,
             'TOTAL_GAJI'                    => $request->total_gaji,
@@ -320,6 +325,7 @@ class adminController extends Controller
             ->insert([
             'ID_DAFTAR_HADIR'               => $request->pegawai,
             'BULAN_GAJIAN'                  => $tdy,
+            'TUNJANGAN'                     => $request->tunjangan,
             'GAJI_POKOK'                    => $request->gaji_pokok,
             'TOTAL_TUNJANGAN_PENGGAJIAN'    => $request->total_tunjangan,
             'TOTAL_GAJI'                    => $request->total_gaji,
